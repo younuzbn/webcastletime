@@ -348,4 +348,163 @@ body::after {
 
 .reset-button:hover svg {
     transform: rotate(180deg);
+}
+
+/* Update existing responsive styles and add new ones */
+@media (max-width: 768px) {
+    .clock-container {
+        padding: 1rem;
+        width: 100%;
+        max-width: 100vw;
+    }
+
+    .clock-circle {
+        padding: 1.5rem;
+        margin: 0 1rem;
+        border-radius: 15px;
+    }
+
+    /* Work Timer mobile styles */
+    .work-timer h2 {
+        font-size: 1rem;
+    }
+
+    .timer-display {
+        font-size: 2.8rem;
+        gap: 0.2rem;
+    }
+
+    .timer-display span {
+        min-width: 60px;
+    }
+
+    /* Current Time mobile styles */
+    .current-time {
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+    }
+
+    .current-time small {
+        font-size: 0.8rem;
+    }
+
+    .time-unit span {
+        font-size: 1.5rem;
+    }
+
+    .colon {
+        font-size: 1.5rem;
+        padding: 0 0.1rem;
+    }
+
+    .meridiem {
+        font-size: 0.9rem;
+        margin-top: 0.3rem;
+    }
+
+    /* Control buttons mobile styles */
+    .punch-controls {
+        flex-direction: row;
+        bottom: 1rem;
+        width: 100%;
+        justify-content: center;
+        gap: 0.8rem;
+        padding: 0 1rem;
+    }
+
+    .punch-button {
+        padding: 0.7rem 1rem;
+        font-size: 0.9rem;
+        flex: 1;
+        max-width: 140px;
+    }
+
+    /* Top buttons mobile styles */
+    .reset-button {
+        top: 1rem;
+        left: 1rem;
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
+    }
+
+    .reset-button svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .date-display {
+        font-size: 0.8rem;
+        top: 1rem;
+        right: 1rem;
+    }
+
+    /* Button content mobile styles */
+    .button-content {
+        gap: 0.3rem;
+    }
+
+    .button-content svg {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 375px) {
+    .timer-display {
+        font-size: 2.2rem;
+    }
+
+    .timer-display span {
+        min-width: 45px;
+    }
+
+    .punch-button {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.8rem;
+    }
+
+    .reset-button, .date-display {
+        font-size: 0.7rem;
+    }
+}
+
+/* Landscape mode adjustments */
+@media (max-height: 500px) and (orientation: landscape) {
+    .clock-circle {
+        padding: 1rem 2rem;
+    }
+
+    .work-timer {
+        margin-bottom: 1rem;
+    }
+
+    .current-time {
+        margin-top: 1rem;
+        padding-top: 1rem;
+    }
+
+    .punch-controls {
+        bottom: 0.5rem;
+    }
+
+    .reset-button, .date-display {
+        top: 0.5rem;
+    }
+}
+
+/* Fix any overlapping issues on very small devices */
+@media (max-width: 320px) {
+    .clock-circle {
+        padding: 1rem;
+    }
+
+    .timer-display {
+        font-size: 2rem;
+    }
+
+    .punch-button {
+        padding: 0.5rem 0.6rem;
+        font-size: 0.75rem;
+    }
 } 
