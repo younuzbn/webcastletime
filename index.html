@@ -8,69 +8,71 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="date-display" id="date"></div>
-    <button id="resetTimer" class="punch-button reset-button">
-        <span class="button-content">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M2 12C2 6.48 6.48 2 12 2C17.52 2 22 6.48 22 12C22 17.52 17.52 22 12 22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                <path d="M12 8V12L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-            Reset Timer
-        </span>
-    </button>
-    
-    <div class="clock-container">
-        <div class="clock-circle">
-            <div class="work-timer" id="workTimer">
-                <h2>Work Duration</h2>
-                <div class="timer-display">
-                    <span id="timerHours">00</span>
-                    <span class="colon">:</span>
-                    <span id="timerMinutes">00</span>
-                    <span class="colon">:</span>
-                    <span id="timerSeconds">00</span>
+    <div class="app-container">
+        <div class="date-display" id="date"></div>
+        <button id="resetTimer" class="punch-button reset-button">
+            <span class="button-content">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2 12C2 6.48 6.48 2 12 2C17.52 2 22 6.48 22 12C22 17.52 17.52 22 12 22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M12 8V12L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Reset Timer
+            </span>
+        </button>
+        
+        <div class="clock-container">
+            <div class="clock-circle">
+                <div class="work-timer" id="workTimer">
+                    <h2>Work Duration</h2>
+                    <div class="timer-display">
+                        <span id="timerHours">00</span>
+                        <span class="colon">:</span>
+                        <span id="timerMinutes">00</span>
+                        <span class="colon">:</span>
+                        <span id="timerSeconds">00</span>
+                    </div>
                 </div>
-            </div>
 
-            <div class="current-time">
-                <small>Current Time</small>
-                <div class="clock" id="clock">
-                    <div class="time-unit">
-                        <span id="hours">00</span>
+                <div class="current-time">
+                    <small>Current Time</small>
+                    <div class="clock" id="clock">
+                        <div class="time-unit">
+                            <span id="hours">00</span>
+                        </div>
+                        <div class="colon">:</div>
+                        <div class="time-unit">
+                            <span id="minutes">00</span>
+                        </div>
+                        <div class="colon">:</div>
+                        <div class="time-unit">
+                            <span id="seconds">00</span>
+                        </div>
                     </div>
-                    <div class="colon">:</div>
-                    <div class="time-unit">
-                        <span id="minutes">00</span>
-                    </div>
-                    <div class="colon">:</div>
-                    <div class="time-unit">
-                        <span id="seconds">00</span>
-                    </div>
+                    <div class="meridiem" id="meridiem">AM</div>
                 </div>
-                <div class="meridiem" id="meridiem">AM</div>
             </div>
         </div>
-    </div>
 
-    <div class="punch-controls">
-        <button id="punchIn" class="punch-button punch-in">
-            <span class="button-content">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 8V12L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>
-                </svg>
-                Punch In
-            </span>
-        </button>
-        <button id="punchOut" class="punch-button punch-out" disabled>
-            <span class="button-content">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 8V12L9 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>
-                </svg>
-                Punch Out
-            </span>
-        </button>
+        <div class="punch-controls">
+            <button id="punchIn" class="punch-button punch-in">
+                <span class="button-content">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 8V12L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    Punch In
+                </span>
+            </button>
+            <button id="punchOut" class="punch-button punch-out" disabled>
+                <span class="button-content">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 8V12L9 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    Punch Out
+                </span>
+            </button>
+        </div>
     </div>
 
     <script>
