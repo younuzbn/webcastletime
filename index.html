@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Clock</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="date-display" id="date"></div>
+    <button id="resetTimer" class="punch-button reset-button">
+        <span class="button-content">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2 12C2 6.48 6.48 2 12 2C17.52 2 22 6.48 22 12C22 17.52 17.52 22 12 22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M12 8V12L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Reset Timer
+        </span>
+    </button>
+    
+    <div class="clock-container">
+        <div class="clock-circle">
+            <div class="work-timer" id="workTimer">
+                <h2>Work Duration</h2>
+                <div class="timer-display">
+                    <span id="timerHours">00</span>
+                    <span class="colon">:</span>
+                    <span id="timerMinutes">00</span>
+                    <span class="colon">:</span>
+                    <span id="timerSeconds">00</span>
+                </div>
+            </div>
+
+            <div class="current-time">
+                <small>Current Time</small>
+                <div class="clock" id="clock">
+                    <div class="time-unit">
+                        <span id="hours">00</span>
+                    </div>
+                    <div class="colon">:</div>
+                    <div class="time-unit">
+                        <span id="minutes">00</span>
+                    </div>
+                    <div class="colon">:</div>
+                    <div class="time-unit">
+                        <span id="seconds">00</span>
+                    </div>
+                </div>
+                <div class="meridiem" id="meridiem">AM</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="punch-controls">
+        <button id="punchIn" class="punch-button punch-in">
+            <span class="button-content">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 8V12L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                Punch In
+            </span>
+        </button>
+        <button id="punchOut" class="punch-button punch-out" disabled>
+            <span class="button-content">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 8V12L9 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                Punch Out
+            </span>
+        </button>
+    </div>
+
+    <script>
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+            
+            // Update time
+            document.getElementById('hours').textContent = (hours % 12 || 12).toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+            document.getElementById('meridiem').textContent = hours >= 12 ? 'PM' : 'AM';
+            
+            // Update date
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('date').textContent = now.toLocaleDateString('en-US', options);
+        }
+
+        // Update every second
+        setInterval(updateClock, 1000);
+        updateClock(); // Initial call
+
+        // Add punch in/out functionality
+        const punchInBtn = document.getElementById('punchIn');
+        const punchOutBtn = document.getElementById('punchOut');
+        
+        // Add device fingerprinting function
+        function generateDeviceId() {
+            const screen = `${window.screen.width}x${window.screen.height}`;
+            const userAgent = navigator.userAgent;
+            const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const language = navigator.language;
+            
+            // Combine device characteristics into a string and hash it
+            const deviceString = `${screen}-${userAgent}-${timeZone}-${language}`;
+            let hash = 0;
+            for (let i = 0; i < deviceString.length; i++) {
+                const char = deviceString.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            return hash.toString(36); // Convert to base36 for shorter ID
+        }
+
+        // Get or create device ID
+        const deviceId = localStorage.getItem('deviceId') || generateDeviceId();
+        localStorage.setItem('deviceId', deviceId);
+
+        // Timer variables with persistence
+        let timerInterval;
+        let totalSeconds = 0;
+        let isTimerRunning = localStorage.getItem(`${deviceId}_isTimerRunning`) === 'true';
+        
+        function getStoredPunches() {
+            const punchesStr = localStorage.getItem(`${deviceId}_punches`);
+            return punchesStr ? JSON.parse(punchesStr) : [];
+        }
+
+        function calculateTotalSeconds() {
+            const punches = getStoredPunches();
+            let total = 0;
+            
+            for (let i = 0; i < punches.length; i += 2) {
+                const punchIn = new Date(punches[i]);
+                const punchOut = punches[i + 1] ? new Date(punches[i + 1]) : new Date();
+                total += Math.floor((punchOut - punchIn) / 1000);
+            }
+            
+            return total;
+        }
+
+        // Initialize total seconds and start timer if running
+        totalSeconds = calculateTotalSeconds();
+        if (isTimerRunning) {
+            punchInBtn.disabled = true;
+            punchOutBtn.disabled = false;
+            startTimer();
+        }
+
+        function updateTimer() {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+
+            document.getElementById('timerHours').textContent = hours.toString().padStart(2, '0');
+            document.getElementById('timerMinutes').textContent = minutes.toString().padStart(2, '0');
+            document.getElementById('timerSeconds').textContent = seconds.toString().padStart(2, '0');
+        }
+
+        function startTimer() {
+            if (!isTimerRunning) {
+                isTimerRunning = true;
+                localStorage.setItem(`${deviceId}_isTimerRunning`, 'true');
+                
+                // Store punch in time
+                const punches = getStoredPunches();
+                punches.push(new Date().toISOString());
+                localStorage.setItem(`${deviceId}_punches`, JSON.stringify(punches));
+            }
+            
+            // Always start the interval
+            timerInterval = setInterval(() => {
+                totalSeconds = calculateTotalSeconds();
+                updateTimer();
+            }, 1000);
+        }
+
+        // Add reset functionality
+        const resetBtn = document.getElementById('resetTimer');
+        
+        function resetTimer() {
+            // Clear all timer data
+            isTimerRunning = false;
+            totalSeconds = 0;
+            clearInterval(timerInterval);
+            
+            // Reset localStorage
+            localStorage.setItem(`${deviceId}_isTimerRunning`, 'false');
+            localStorage.setItem(`${deviceId}_punches`, JSON.stringify([]));
+            
+            // Reset buttons
+            punchInBtn.disabled = false;
+            punchOutBtn.disabled = true;
+            
+            // Update display
+            updateTimer();
+        }
+
+        resetBtn.addEventListener('click', function() {
+            if (confirm('Are you sure you want to reset the work duration timer?')) {
+                resetTimer();
+            }
+        });
+
+        // Add pause timer function
+        function pauseTimer() {
+            isTimerRunning = false;
+            localStorage.setItem(`${deviceId}_isTimerRunning`, 'false');
+            
+            // Store punch out time
+            const punches = getStoredPunches();
+            punches.push(new Date().toISOString());
+            localStorage.setItem(`${deviceId}_punches`, JSON.stringify(punches));
+            
+            clearInterval(timerInterval);
+            totalSeconds = calculateTotalSeconds();
+            updateTimer();
+        }
+
+        // Update punch in/out event listeners
+        punchInBtn.addEventListener('click', function() {
+            const now = new Date();
+            this.disabled = true;
+            punchOutBtn.disabled = false;
+            startTimer();
+            console.log('Punched in at:', now.toLocaleTimeString());
+        });
+        
+        punchOutBtn.addEventListener('click', function() {
+            const now = new Date();
+            this.disabled = true;
+            punchInBtn.disabled = false;
+            pauseTimer();
+            console.log('Punched out at:', now.toLocaleTimeString());
+        });
+
+        // Check for new day on page load
+        function checkAndResetForNewDay() {
+            const lastDate = localStorage.getItem(`${deviceId}_lastDate`);
+            const today = new Date().toDateString();
+            
+            if (lastDate && lastDate !== today) {
+                // Reset everything for new day
+                totalSeconds = 0;
+                isTimerRunning = false;
+                localStorage.setItem(`${deviceId}_isTimerRunning`, 'false');
+                localStorage.setItem(`${deviceId}_punches`, JSON.stringify([]));
+                punchInBtn.disabled = false;
+                punchOutBtn.disabled = true;
+                updateTimer();
+            }
+            
+            localStorage.setItem(`${deviceId}_lastDate`, today);
+        }
+
+        // Check for new day on page load
+        checkAndResetForNewDay();
+    </script>
+</body>
+</html> 
